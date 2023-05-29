@@ -7,8 +7,8 @@ st.set_page_config(page_title="AVA", page_icon=":robot_face:")
 st.markdown("<h1 style='text-align: center;'>AVA - a totally harmless chatbot 😬</h1>", unsafe_allow_html=True)
 
 # Set org ID and API key
-openai.organization = "<YOUR_OPENAI_ORG_ID>"
-openai.api_key = "<YOUR_OPENAI_API_KEY>"
+# openai.organization = "<YOUR_OPENAI_ORG_ID>"
+# openai.api_key = "<YOUR_OPENAI_API_KEY>"
 
 # Initialise session state variables
 if 'generated' not in st.session_state:
@@ -58,6 +58,11 @@ if clear_button:
 
 # generate a response
 def generate_response(prompt):
+    try:
+        openai.api_key = st.secrets.api_credentials.api_key
+    except (KeyError, AttributeError):
+        st.error(st.session_state.locale.empty_api_handler)
+        
     st.session_state['messages'].append({"role": "user", "content": prompt})
 
     completion = openai.ChatCompletion.create(
